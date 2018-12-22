@@ -1,0 +1,131 @@
+<html lang="en">
+
+<head>
+    <% include partials/head %>
+</head>
+
+<body id="page-top" class="index">
+    <!-- Navigation -->
+    <% include partials/header %>
+
+    <!-- Header -->
+    <header>
+        <div class="container" id="maincontent" tabindex="-1">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="intro-text">
+                        <h1 class="maintitle">Custom url shortener with free personalized links | custom short url
+                            branded links</h1>
+                        <h2 class="name">Shortening your URL?</h2>
+                        <hr class="star-light">
+                        <p><span class="skills">Sure, Cekak will do that at a mouse click.</span></p><br>
+                        <form action="url/create" id="form_input" class="form-inline" method="post" validate="validate">
+                            <div class="input-group input-group-lg ">
+                                <input type="text" class="form-control" name="url" value="" placeholder="Paste your lengthy url to shorten it"
+                                    required="">
+                                <span class="input-group-addon"><span class="span1">Shorten</span><span class="span2"></span></span>
+                            </div>
+                            <input id="submit" type="submit" value="Shorten" style="position: fixed; left: -99999px; bottom: -9999px">
+                        </form>
+                        <div id="form_input_error" class="help-block">
+                        </div>
+                        <div id="form_output">
+                            <span style="position: absolute; left: -9999px; visibility: hidden;" id="default_domain">http://cekak.web.id/</span>
+                            <input id="shorturl" type="text" value="" style="width: 212px; max-width: 75%">
+                            <button type="button" class="btn btn-sm btn-default" data-clipboard-target="#shorturl">copy</button>
+                        </div>
+                        <div>* FREE and always will be — Unlimited URLs *</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section id="how-it-works">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>How it Works</h2>
+                    <hr class="star-primary"><br>
+                </div>
+            </div>
+
+            <div class="row text-center">
+                <div class="col-sm-6">
+                    <div class="hiw-box">
+                        <div class="jumbotron-icon"><i class="fa fa-6 fa-link" aria-hidden="true"></i></div>
+                        <div class="caption">
+                            <h5 class="caption-title">TRANSFORM LENGTHY URLs</h5>
+                            <div class="caption-content">
+                                https://andaglos.id/wl-full-stack-developer/
+                            </div>
+                            <br>
+                            <br>
+                            <h3>1.</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="hiw-box">
+                        <div class="jumbotron-icon"><i class="fa fa-6 fa-paper-plane" aria-hidden="true"></i></div>
+                        <div class="caption">
+                            <h5 class="caption-title">into SHORT URLs</h5>
+                            <div class="caption-content">
+                                <a href="/" target="_blank">https://andaglos.id/wl-full-stack-developer/</a><br>ex,<br>http://cekak.web.id/7nXccT
+                            </div>
+                            <h3>2.</h3>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <% include partials/footer %>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#form_input .input-group-addon').click(function () {
+                $('#submit').trigger('click');
+            });
+
+            $("#form_input").submit(function (e) {
+                e.preventDefault();
+                $('#form_input .input-group-addon .span2').html('...');
+                $.ajax({
+                    type: "POST",
+                    url: "/users/createUrl",
+                    contentType: "application/json",
+                    dataType: "json",
+                    data: JSON.stringify({
+                        "longUrl": $("#form_input input[name=url]").val()
+                    }),
+                    success: function (result) {
+                        if (result.result == true) {
+                            $('#form_output input').val($('#default_domain').text() + result.shortUrl);
+                            $('#form_output').height(50);
+                            $('#form_input_error').html('').removeClass('with-errors');
+                        } else {
+                            $('#form_output input').val("");
+                            $('#form_output').height(0);
+                            $('#form_input_error').html(result.reason).addClass('with-errors');
+                        }
+                        $('#form_input .input-group-addon .span2').html('');
+                    }
+                });
+
+            });
+        });
+    </script>
+    <script type="text/javascript" src="/js/clipboard.min.js"></script>
+    <script type="text/javascript">
+        var clipboard = new Clipboard('#form_output .btn');
+        clipboard.on('success', function (e) {
+            $('#form_output .btn').text('Copied');
+            setTimeout(function () {
+                $('#form_output .btn').text('Copy');
+            }, 2000);
+            ev.clearSelection();
+        });
+    </script>
+</body>
+
+</html>
