@@ -66,9 +66,9 @@ exports.login = (req, res) => {
 
 exports.createUrl = (req, res) => {
   const session = req.session
-  const username = session.user.username
   const data = req.body
   if (session.user) {
+    const username = session.user.username
     let longUrl = data.longUrl
     const hash = url.generateShortURL()
     UrlModel.create({ hash, longUrl, username })
